@@ -11,31 +11,19 @@ const CONFIG = {
   WHATSAPP: '',
   MUSIC_VOLUME: 0.45,
   // Dress-code dots per event: hex colours. Empty = "to be announced".
-  DRESS: { sangeet: [], reception: [], muhurtham: [] },
+  DRESS: { sangeet: [], haldi: [], reception: [], wedding: [] },
   // Calendar events (IST). Edit Sangeet time when known.
   EVENTS: {
     sangeet:   { title: 'Sangeet — Sujitha & Sidharth', start: '20261210T180000', end: '20261210T230000', loc: 'MGM Beach Resorts, East Coast Road, Muttukadu, Chennai', tba: true },
+    haldi:     { title: 'Haldi — Sujitha & Sidharth', start: '20261212T100000', end: '20261212T130000', loc: 'To be announced', tba: true },
     reception: { title: 'Wedding Reception — Sujitha & Sidharth', start: '20261213T183000', end: '20261213T220000', loc: 'Grand Empire Convention Hall, Thanjavur Road, Thiruverumbur, Trichy 620013' },
-    muhurtham: { title: 'Muhurtham — Sujitha weds Sidharth', start: '20261214T053000', end: '20261214T070000', loc: 'Grand Empire Convention Hall, Thanjavur Road, Thiruverumbur, Trichy 620013' }
+    wedding:   { title: 'Wedding — Sujitha & Sidharth', start: '20261214T053000', end: '20261214T070000', loc: 'Grand Empire Convention Hall, Thanjavur Road, Thiruverumbur, Trichy 620013' }
   },
   MUHURTHAM_ISO: '2026-12-14T05:30:00+05:30'
 };
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
-
-// ---------- Language ----------
-let lang = localStorage.getItem('lang') || 'en';
-function applyLang(l) {
-  lang = l;
-  const dict = window.I18N[l] || window.I18N.en;
-  $$('[data-i18n]').forEach(el => { const k = el.dataset.i18n; if (dict[k] != null) el.innerHTML = dict[k]; });
-  document.documentElement.lang = l;
-  document.body.classList.toggle('lang-ta', l === 'ta');
-  $('#langBtn').textContent = dict['lang.btn'];
-  syncAudioBtn();
-  try { localStorage.setItem('lang', l); } catch {}
-}
 
 // ---------- Opener: tap → lamp lights → curtains part → music ----------
 const opener = $('#opener');
@@ -61,21 +49,20 @@ document.addEventListener('touchend', resumeCtx, { passive: true });
 
 function openInvitation() {
   if (opened) return; opened = true;
-  opener.classList.add('is-lit');
+
   // music must start inside the tap gesture
   if (music.querySelector('source')?.getAttribute('src')) {
     setUpMusicVolume(); resumeCtx();
     music.play().then(showAudioBtn).catch(() => {});
     music.addEventListener('loadedmetadata', showAudioBtn, { once: true });
   }
-  setTimeout(() => opener.classList.add('is-open'), 1100);
+  opener.classList.add('is-open');
   setTimeout(() => {
     document.body.classList.remove('is-sealed');
     page.removeAttribute('aria-hidden');
-    opener.classList.add('is-gone');
     startPetals(); queueReveal(); initScroll();
-  }, 1500);
-  setTimeout(() => { opener.style.display = 'none'; }, 2400);
+  }, 350);
+  setTimeout(() => { opener.style.display = 'none'; }, 1200);
 }
 opener.addEventListener('click', openInvitation);
 opener.addEventListener('touchstart', openInvitation, { passive: true });
@@ -87,17 +74,14 @@ function showAudioBtn() {
   clearTimeout(showAudioBtn.t); showAudioBtn.t = setTimeout(() => audioBtn.classList.add('compact'), 4000);
 }
 function syncAudioBtn() {
-  const d = window.I18N[lang];
   audioBtn.setAttribute('aria-pressed', String(!music.paused));
-  audioLabel.textContent = music.paused ? d['audio.play'] : d['audio.pause'];
+  audioLabel.textContent = music.paused ? 'Play music' : 'Pause music';
 }
 audioBtn.addEventListener('click', () => {
   if (music.paused) { resumeCtx(); music.play().catch(() => {}); } else music.pause();
   audioBtn.classList.remove('compact'); clearTimeout(showAudioBtn.t); showAudioBtn.t = setTimeout(() => audioBtn.classList.add('compact'), 2500);
 });
 music.addEventListener('play', syncAudioBtn); music.addEventListener('pause', syncAudioBtn);
-$('#langBtn').addEventListener('click', () => applyLang(lang === 'en' ? 'ta' : 'en'));
-applyLang(lang);
 
 // ---------- Scroll reveal (rect-based, robust) ----------
 let pending = $$('.rv'), raf = false;
@@ -112,9 +96,8 @@ addEventListener('scroll', queueReveal, { passive: true }); addEventListener('re
 function initScroll() {
   if (!window.gsap || !window.ScrollTrigger) return;
   gsap.registerPlugin(ScrollTrigger);
-  gsap.to('.hero__art', { yPercent: -12, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
-  gsap.to('.kolam', { rotate: 40, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
-  $$('.event__pic img').forEach(img => gsap.fromTo(img, { yPercent: -8 }, { yPercent: 8, ease: 'none', scrollTrigger: { trigger: img, start: 'top bottom', end: 'bottom top', scrub: true } }));
+  gsap.to('.hero__photo', { yPercent: -6, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
+  $$('.photo img').forEach(img => gsap.fromTo(img, { scale: 1.08 }, { scale: 1, ease: 'none', scrollTrigger: { trigger: img, start: 'top bottom', end: 'center center', scrub: true } }));
   $$('.count__cell').forEach((c, i) => gsap.from(c, { y: 40, opacity: 0, duration: .8, delay: i * .1, scrollTrigger: { trigger: '.count__row', start: 'top 85%' } }));
   const links = $$('.dock a');
   links.forEach(a => {
@@ -147,13 +130,13 @@ function startPetals() {
   function paint() {
     const r = wrap.getBoundingClientRect(); cv.width = Math.max(1, r.width * devicePixelRatio); cv.height = Math.max(1, r.height * devicePixelRatio);
     const g = ctx.createLinearGradient(0, 0, cv.width, cv.height);
-    g.addColorStop(0, '#8a5a12'); g.addColorStop(.25, '#e2bf63'); g.addColorStop(.5, '#c9962b'); g.addColorStop(.75, '#f3d27a'); g.addColorStop(1, '#8a5a12');
+    g.addColorStop(0, '#b8923a'); g.addColorStop(.3, '#efdca0'); g.addColorStop(.5, '#c9a44c'); g.addColorStop(.75, '#f0e2b0'); g.addColorStop(1, '#9c7a2a');
     ctx.globalCompositeOperation = 'source-over'; ctx.fillStyle = g; ctx.fillRect(0, 0, cv.width, cv.height);
     // zari texture
     ctx.strokeStyle = 'rgba(255,255,255,.22)'; ctx.lineWidth = 1 * devicePixelRatio;
     for (let x = -cv.height; x < cv.width; x += 14 * devicePixelRatio) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x + cv.height, cv.height); ctx.stroke(); }
-    ctx.fillStyle = 'rgba(90,15,22,.85)'; ctx.font = `${13 * devicePixelRatio}px Marcellus, serif`; ctx.textAlign = 'center';
-    ctx.fillText('✦  14 · 12 · 2026  ✦', cv.width / 2, cv.height / 2 - 6 * devicePixelRatio);
+    ctx.fillStyle = 'rgba(60,45,10,.75)'; ctx.font = `${12 * devicePixelRatio}px Jost, sans-serif`; ctx.textAlign = 'center';
+    ctx.fillText('S A V E   T H E   D A T E', cv.width / 2, cv.height / 2 - 6 * devicePixelRatio);
   }
   paint(); addEventListener('resize', () => { if (!wrap.classList.contains('is-done')) paint(); });
   let down = false, cleared = 0, lastCheck = 0;
@@ -211,7 +194,7 @@ $$('.js-ics').forEach(b => b.addEventListener('click', () => ics(b.closest('.eve
   if (CONFIG.WHATSAPP) wa.href = `https://wa.me/${CONFIG.WHATSAPP}?text=${encodeURIComponent("Yes, we'll be there for Sujitha & Sidharth's wedding!")}`; else wa.parentElement.hidden = true;
   form.addEventListener('submit', async e => {
     e.preventDefault();
-    const fd = new FormData(form); const entry = { name: fd.get('name')?.trim(), guests: fd.get('guests'), events: fd.getAll('ev'), message: fd.get('message')?.trim(), lang, at: new Date().toISOString() };
+    const fd = new FormData(form); const entry = { name: fd.get('name')?.trim(), guests: fd.get('guests'), events: fd.getAll('ev'), message: fd.get('message')?.trim(), at: new Date().toISOString() };
     if (!entry.name) { form.name.focus(); return; }
     const btn = form.querySelector('button[type=submit]'); btn.disabled = true;
     try { if (CONFIG.RSVP_ENDPOINT) await fetch(CONFIG.RSVP_ENDPOINT, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(entry) }); } catch {}

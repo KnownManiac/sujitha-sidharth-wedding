@@ -1,6 +1,6 @@
 # Sujitha & Sidharth — wedding invitation
 
-Static site: index.html · styles.css · script.js · i18n.js · assets/
+Static site: index.html · styles.css · script.js · assets/
 
 ## Run locally
     cd wedding
@@ -11,7 +11,7 @@ then open http://localhost:8000 (must be served over http, not opened as a file,
 Drop the folder on Vercel (no build step) or any static host.
 
 ## Edit
-- All copy in both languages: i18n.js
+- Copy: index.html
 - RSVP endpoint, WhatsApp number, dress-code colours, calendar times: top of script.js (CONFIG)
 - Music: assets/audio/song.mp3 (96 s loop; replace with any mp3)
 - Illustrations: assets/img/ (transparent PNGs cut from the ChatGPT composite)
