@@ -53,8 +53,9 @@ function openInvitation() {
   // music must start inside the tap gesture
   if (music.querySelector('source')?.getAttribute('src')) {
     setUpMusicVolume(); resumeCtx();
-    music.play().then(showAudioBtn).catch(() => {});
-    music.addEventListener('loadedmetadata', showAudioBtn, { once: true });
+    music.play().catch(() => {});
+    // show the toggle regardless, so a guest whose browser blocked autoplay can start it
+    setTimeout(showAudioBtn, 600);
   }
   opener.classList.add('is-open');
   setTimeout(() => {
@@ -65,10 +66,9 @@ function openInvitation() {
   setTimeout(() => { opener.style.display = 'none'; }, 1200);
 }
 opener.addEventListener('click', openInvitation);
-opener.addEventListener('touchstart', openInvitation, { passive: true });
 
 function showAudioBtn() {
-  if (!music.duration && music.readyState === 0) return;
+  syncAudioBtn();
   audioBtn.hidden = false;
   requestAnimationFrame(() => audioBtn.classList.add('show'));
   clearTimeout(showAudioBtn.t); showAudioBtn.t = setTimeout(() => audioBtn.classList.add('compact'), 4000);
