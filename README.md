@@ -13,6 +13,6 @@ Drop the folder on Vercel (no build step) or any static host.
 ## Edit
 - Copy: index.html
 - RSVP endpoint, WhatsApp number, dress-code colours, calendar times: top of script.js (CONFIG)
-- Music: assets/audio/song.mp3 (96 s loop; replace with any mp3)
+- Music: assets/audio/song.mp3 (Subramaniapuram love theme; replace with any mp3)
 - Illustrations: assets/img/ (transparent PNGs cut from the ChatGPT composite)
 
