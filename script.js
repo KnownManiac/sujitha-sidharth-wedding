@@ -15,7 +15,7 @@ const CONFIG = {
     sangeet:   { title: 'Sangeet — Sidharth & Sujitha', start: '20261210T180000', end: '20261210T230000', loc: 'MGM Beach Resorts, East Coast Road, Muttukadu, Chennai' },
     haldi:     { title: 'Haldi — Sidharth & Sujitha', start: '20261213T100000', end: '20261213T130000', loc: 'Royal Nivaasa (bride\'s house), Trichy' },
     reception: { title: 'Wedding Reception — Sidharth & Sujitha', start: '20261213T183000', end: '20261213T220000', loc: 'Grand Empire Convention Hall, Thanjavur Road, Thiruverumbur, Trichy 620013' },
-    reception2: { title: 'Reception (Kovilpatti) — Sidharth & Sujitha', start: '20261219T180000', end: '20261219T220000', loc: 'Aarthi Mahal, Kovilpatti', tba: true },
+    reception2: { title: 'Reception (Kovilpatti) — Sidharth & Sujitha', start: '20261219T183000', end: '20261219T220000', loc: 'Aarthi Mahal, Kovilpatti' },
     wedding:   { title: 'Muhurtham — Sidharth & Sujitha', start: '20261214T053000', end: '20261214T070000', loc: 'Grand Empire Convention Hall, Thanjavur Road, Thiruverumbur, Trichy 620013' }
   },
   MUHURTHAM_ISO: '2026-12-14T05:30:00+05:30'
