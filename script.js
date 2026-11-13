@@ -1,23 +1,21 @@
 /* ============================================================
-   Sujitha & Sidharth — interactions
+   Sidharth & Sujitha — interactions
    ============================================================ */
 
 // ---------- Config (edit these) ----------
 const CONFIG = {
   // Where the RSVP form posts. Leave '' to keep it client-side (shows thank-you only).
   // e.g. a Google Apps Script web-app URL, Formspree, or your own endpoint.
-  RSVP_ENDPOINT: '',
+  RSVP_ENDPOINT: 'https://script.google.com/macros/s/AKfycbx97AeTNfYg3a-ZC7QUeblZBkFA393oN3NQMGHpHJ0xiLvYvUPzTfWX2I0hGf1Vu4kVFA/exec',
   // WhatsApp number in international format without '+', e.g. '919876543210'. '' hides the link.
   WHATSAPP: '',
   MUSIC_VOLUME: 0.45,
-  // Dress-code dots per event: hex colours. Empty = "to be announced".
-  DRESS: { sangeet: [], haldi: [], reception: [], wedding: [] },
   // Calendar events (IST). Edit Sangeet time when known.
   EVENTS: {
-    sangeet:   { title: 'Sangeet — Sujitha & Sidharth', start: '20261210T180000', end: '20261210T230000', loc: 'MGM Beach Resorts, East Coast Road, Muttukadu, Chennai', tba: true },
-    haldi:     { title: 'Haldi — Sujitha & Sidharth', start: '20261212T100000', end: '20261212T130000', loc: 'To be announced', tba: true },
-    reception: { title: 'Wedding Reception — Sujitha & Sidharth', start: '20261213T183000', end: '20261213T220000', loc: 'Grand Empire Convention Hall, Thanjavur Road, Thiruverumbur, Trichy 620013' },
-    wedding:   { title: 'Wedding — Sujitha & Sidharth', start: '20261214T053000', end: '20261214T070000', loc: 'Grand Empire Convention Hall, Thanjavur Road, Thiruverumbur, Trichy 620013' }
+    sangeet:   { title: 'Sangeet — Sidharth & Sujitha', start: '20261210T180000', end: '20261210T230000', loc: 'MGM Beach Resorts, East Coast Road, Muttukadu, Chennai' },
+    haldi:     { title: 'Haldi — Sidharth & Sujitha', start: '20261213T100000', end: '20261213T130000', loc: 'Royal Nivaasa (bride\'s house), Trichy' },
+    reception: { title: 'Wedding Reception — Sidharth & Sujitha', start: '20261213T183000', end: '20261213T220000', loc: 'Grand Empire Convention Hall, Thanjavur Road, Thiruverumbur, Trichy 620013' },
+    wedding:   { title: 'Muhurtham — Sidharth & Sujitha', start: '20261214T053000', end: '20261214T070000', loc: 'Grand Empire Convention Hall, Thanjavur Road, Thiruverumbur, Trichy 620013' }
   },
   MUHURTHAM_ISO: '2026-12-14T05:30:00+05:30'
 };
@@ -158,20 +156,15 @@ function startPetals() {
   cv.addEventListener('pointercancel', () => { down = false; });
 })();
 
-// ---------- Dress-code dots ----------
-$$('.event').forEach(ev => {
-  const dots = CONFIG.DRESS[ev.dataset.ics] || []; const box = ev.querySelector('.dress__dots');
-  box.innerHTML = dots.map(c => `<span style="background:${c}"></span>`).join('');
-});
 
 // ---------- Add to calendar (.ics) ----------
 function ics(key) {
   const e = CONFIG.EVENTS[key]; if (!e) return;
-  const body = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Sujitha & Sidharth//Wedding//EN', 'BEGIN:VEVENT',
+  const body = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Sidharth & Sujitha//Wedding//EN', 'BEGIN:VEVENT',
     `UID:${key}-sujitha-sidharth-2026@invite`, `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d+/, '')}`,
     `DTSTART;TZID=Asia/Kolkata:${e.start}`, `DTEND;TZID=Asia/Kolkata:${e.end}`,
     `SUMMARY:${e.title}`, `LOCATION:${e.loc.replace(/,/g, '\\,')}`,
-    `DESCRIPTION:${e.tba ? 'Time to be confirmed. ' : ''}Wedding of Sujitha & Sidharth.`, 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
+    `DESCRIPTION:${e.tba ? 'Time to be confirmed. ' : ''}Wedding of Sidharth & Sujitha.`, 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
   const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([body], { type: 'text/calendar' })); a.download = `${key}-sujitha-sidharth.ics`; a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 2000);
 }
@@ -191,7 +184,7 @@ $$('.js-ics').forEach(b => b.addEventListener('click', () => ics(b.closest('.eve
 // ---------- RSVP ----------
 (function rsvp() {
   const form = $('#rsvpForm'), done = $('#rsvpDone'), wa = $('#waLink');
-  if (CONFIG.WHATSAPP) wa.href = `https://wa.me/${CONFIG.WHATSAPP}?text=${encodeURIComponent("Yes, we'll be there for Sujitha & Sidharth's wedding!")}`; else wa.parentElement.hidden = true;
+  if (CONFIG.WHATSAPP) wa.href = `https://wa.me/${CONFIG.WHATSAPP}?text=${encodeURIComponent("Yes, we'll be there for Sidharth & Sujitha's wedding!")}`; else wa.parentElement.hidden = true;
   form.addEventListener('submit', async e => {
     e.preventDefault();
     const fd = new FormData(form); const entry = { name: fd.get('name')?.trim(), guests: fd.get('guests'), events: fd.getAll('ev'), message: fd.get('message')?.trim(), at: new Date().toISOString() };
